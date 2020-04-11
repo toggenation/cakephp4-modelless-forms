@@ -28,3 +28,11 @@ Connect to see failing and successful examples
 | Fail    | http://localhost:8765/Print/multiFormFail    |
 
 With the failing example when you submit the right or left form the values are immediately echoed in the opposite
+
+See the files
+
+-   src/Controller/PrintController.php
+-   src/Form/CustomPrintFail.php
+-   src/Form/CustomPrintSuccess.php
+-   templates/Print/multi_form_fail.php
+-   templates/Print/multi_form_success.php
