@@ -55,14 +55,44 @@ class PrintController extends AppController
 
         if ($this->request->is("POST")) {
             $data = $this->request->getData();
+
+            /**
+             * data looks like this with the formname
+             * prepended to the form fields
+             * [
+             *      "left-copies" => 2 ,
+             *      'left-printer_id'  => 25,
+             *      'formName' => 'left
+             * ]
+             */
+
             $formName = $data['formName'];
             if ($forms[$formName]->validate($data)) {
+
+                /**
+                 * Once it is validated you can then strip out
+                 * the form prefix if needed. to make it
+                 * [
+                 *      'copies' => 2,
+                 *      'printer_id' => 25.
+                 *      'formName' => 'left
+                 * ]
+                 */
+                $strippedData = [];
+                foreach ($data as $key => $value) {
+                    $newKey = str_replace($formName. '-', '', $key);
+                    $strippedData[$newKey] = $value;
+                }
+
+                $data = $strippedData;
+                // do stuff with data
+
                 $this->Flash->success("It works");
-            // do stuff
             } else {
                 $this->Flash->error('Validation failed!');
             }
         }
+
         $printers = [
             25 => "Factory Printer 1",
             34 => "End of Production Line Printer"
@@ -70,97 +100,5 @@ class PrintController extends AppController
 
 
         $this->set(compact('forms', 'printers'));
-    }
-
-    /**
-     * Index method
-     *
-     * @return \Cake\Http\Response|null|void Renders view
-     */
-    public function index()
-    {
-        $print = $this->paginate($this->Print);
-
-        $this->set(compact('print'));
-    }
-
-    /**
-     * View method
-     *
-     * @param string|null $id Print id.
-     * @return \Cake\Http\Response|null|void Renders view
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function view($id = null)
-    {
-        $print = $this->Print->get($id, [
-            'contain' => [],
-        ]);
-
-        $this->set('print', $print);
-    }
-
-    /**
-     * Add method
-     *
-     * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
-     */
-    public function add()
-    {
-        $print = $this->Print->newEmptyEntity();
-        if ($this->request->is('post')) {
-            $print = $this->Print->patchEntity($print, $this->request->getData());
-            if ($this->Print->save($print)) {
-                $this->Flash->success(__('The print has been saved.'));
-
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The print could not be saved. Please, try again.'));
-        }
-        $this->set(compact('print'));
-    }
-
-    /**
-     * Edit method
-     *
-     * @param string|null $id Print id.
-     * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function edit($id = null)
-    {
-        $print = $this->Print->get($id, [
-            'contain' => [],
-        ]);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $print = $this->Print->patchEntity($print, $this->request->getData());
-            if ($this->Print->save($print)) {
-                $this->Flash->success(__('The print has been saved.'));
-
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The print could not be saved. Please, try again.'));
-        }
-        $this->set(compact('print'));
-    }
-
-    /**
-     * Delete method
-     *
-     * @param string|null $id Print id.
-     * @return \Cake\Http\Response|null|void Redirects to index.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function delete($id = null)
-    {
-        $this->request->allowMethod(['post', 'delete']);
-        $print = $this->Print->get($id);
-        if ($this->Print->delete($print)) {
-            $this->Flash->success(__('The print has been deleted.'));
-        } else {
-            $this->Flash->error(__('The print could not be deleted. Please, try again.'));
-        }
-
-        return $this->redirect(['action' => 'index']);
     }
 }

@@ -14,15 +14,15 @@
                     'value' => $formName
                 ]
             ); ?>
-        <?=
-        $this->Form->control(
-            $formName  . '-printer_id',
-            [
-            'empty' => '(select)',
-            'options' => $printers
-            ]
-        ); ?>
-        <?= $this->Form->control($formName  . '-copies'); ?>
+        <?= $this->Form->control(
+                $formName  . '-printer_id',
+                [
+                    'label' => "Printer",
+                    'empty' => '(select)',
+                    'options' => $printers
+                ]
+            ); ?>
+        <?= $this->Form->control($formName  . '-copies', [ 'label' => "Copies"]); ?>
         <?= $this->Form->submit('Submit', ['class' => 'mt-3']); ?>
         <?= $this->Form->end(); ?>
     </div>
