@@ -1,6 +1,8 @@
 <div class="row">
     <div class="col">
-        <h1>Example of Successful Multiple Duplicate Forms on a Page Implementation</h1>
+        <h1>Example of</h1>
+        <h2>Successful Multiple Duplicate Forms on a Page Implementation</h2>
+        <?php echo $this->element('switcher'); ?>
     </div>
 </div>
 <div class="row">
