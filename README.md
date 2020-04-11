@@ -2,7 +2,7 @@
 
 This is an example of how to handle having 2 or more forms on a page that have the same fields
 
-When you run multiple separate instances of a form class on a page and the forms have the same field names and then submit one of the forms.
+When you run multiple separate instances of a form class on a page and the forms have the same field names and then submit one of the forms the non active form grabs the current values from the active one.
 
 This is an example of how to make sure your form fields are all unique and won't interfere with other forms on the page despite having the same field names.
 
