@@ -63,9 +63,6 @@ So for the `left` form the field names become `left-copies` and `left-printer_id
     }
 ```
 
-
-```
-
 To test this clone this repo and then
 
 ```
