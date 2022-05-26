@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controller;
@@ -16,7 +17,7 @@ class PrintController extends AppController
 {
     public function multiFormFail()
     {
-        $formNames = [ 'left', 'right'];
+        $formNames = ['left', 'right'];
         $forms = [];
         foreach ($formNames as $form) {
             $forms[$form] = new CustomPrintFailForm();
@@ -27,7 +28,7 @@ class PrintController extends AppController
             $formName = $data['formName'];
             if ($forms[$formName]->validate($data)) {
                 $this->Flash->success("It works");
-            // do stuff
+                // do stuff
             } else {
                 $this->Flash->error('Validation failed!');
             }
@@ -43,14 +44,13 @@ class PrintController extends AppController
 
     public function multiFormSuccess()
     {
-        $formNames = [ 'left', 'right'];
+        $formNames = ['left', 'right'];
         $forms = [];
-        foreach ($formNames as $form) {
-            $copies = $form === 'left' ? 20: 7;
 
-            $forms[$form] = (new CustomPrintSuccessForm())
-                ->setCopies($copies)
-                ->setFormName($form);
+        foreach ($formNames as $form) {
+            $copies = $form === 'left' ? 20 : 7;
+
+            $forms[$form] = new CustomPrintSuccessForm($form, $copies);
         }
 
         if ($this->request->is("POST")) {
@@ -78,13 +78,9 @@ class PrintController extends AppController
                  *      'formName' => 'left
                  * ]
                  */
-                $strippedData = [];
-                foreach ($data as $key => $value) {
-                    $newKey = str_replace($formName. '-', '', $key);
-                    $strippedData[$newKey] = $value;
-                }
 
-                $data = $strippedData;
+
+                $data = $forms[$formName]->data($data);
                 // do stuff with data
 
                 $this->Flash->success("It works");

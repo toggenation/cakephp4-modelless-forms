@@ -1,25 +1,30 @@
+<?php
+
+use Cake\Utility\Inflector;
+?>
+
 <ul class="nav nav-pills">
     <?php
-$switcher = [
-'multiFormSuccess', 'multiFormFail'
-];
+    $switcher = [
+        'multiFormSuccess', 'multiFormFail'
+    ];
 
-foreach ($switcher as $action): ?>
+    foreach ($switcher as $action) : ?>
     <li class="nav-item">
         <?php
 
-        $active = ($action === $this->request->getParam('action')) ? 'active' : '';
-        echo $this->Html->link(
-            $action,
-            [
+            $active = ($action === $this->request->getParam('action')) ? 'active' : '';
+            echo $this->Html->link(
+                Inflector::humanize(Inflector::underscore($action)),
+                [
 
-                'action' => $action
+                    'action' => $action
                 ],
-            [
-        'class' => 'nav-link ' . $active
-        ]
-        ); ?>
+                [
+                    'class' => 'nav-link ' . $active
+                ]
+            ); ?>
     </li>
-    <?php endforeach;?>
+    <?php endforeach; ?>
 
 </ul>

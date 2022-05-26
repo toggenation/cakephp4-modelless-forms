@@ -1,8 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Form;
 
+use App\Form\DecorateForm;
 use Cake\Form\Form;
 use Cake\Form\Schema;
 use Cake\Validation\Validator;
@@ -12,8 +14,14 @@ use Cake\Validation\Validator;
  */
 class CustomPrintSuccessForm extends Form
 {
-    protected $formName = '';
-    protected $copies = 12;
+    protected string $formName;
+    protected int $copies;
+
+    public function __construct($name = null, $copies = 12)
+    {
+        $this->formName = $name;
+        $this->copies = $copies;
+    }
 
     /**
      * Builds the schema for the modelless form
@@ -23,12 +31,12 @@ class CustomPrintSuccessForm extends Form
      */
     protected function _buildSchema(Schema $schema): Schema
     {
-        return $schema->addFields(
-            [
-            $this->prependFormName('copies') => 'integer',
-            $this->prependFormName('printer_id') => 'integer'
-            ]
-        );
+        $schema = new DecorateForm($schema, $this->formName);
+
+        $schema->addField('copies', 'integer')
+            ->addField('printer_id', 'integer');
+
+        return $schema->wrapped;
     }
 
     public function setCopies($copies)
@@ -40,23 +48,6 @@ class CustomPrintSuccessForm extends Form
         return $this;
     }
 
-    public function setFormName($formName)
-    {
-        if (!empty($formName) && is_string($formName)) {
-            $this->formName = $formName;
-        }
-
-        return $this;
-    }
-
-    public function prependFormName(string $fieldName) : string
-    {
-        if (!empty($this->formName) && !empty($fieldName) && is_string($fieldName)) {
-            return $this->formName . '-' . $fieldName;
-        }
-        return $fieldName;
-    }
-
     /**
      * Form validation builder
      *
@@ -65,10 +56,14 @@ class CustomPrintSuccessForm extends Form
      */
     public function validationDefault(Validator $validator): Validator
     {
-        return $validator
-        ->notBlank($this->prependFormName('printer_id'), "Please select a printer")
-        ->notBlank($this->prependFormName('copies'), 'Please enter the number of copies you want to print')
-        ->lessThan($this->prependFormName('copies'), $this->copies, sprintf('Copies must be less than %d', $this->copies));
+        $validator = new DecorateForm($validator, $this->formName);
+
+        $validator
+            ->notBlank('printer_id', "Please select a printer")
+            ->allowEmptyString('copies', 'Please enter the number of copies you want to print')
+            ->lessThan('copies', $this->copies, sprintf('Copies must be less than %d', $this->copies));
+
+        return $validator->wrapped;
     }
 
     /**
@@ -80,5 +75,16 @@ class CustomPrintSuccessForm extends Form
     protected function _execute(array $data): bool
     {
         return true;
+    }
+
+    public function data($data)
+    {
+
+        foreach ($data as $key => $value) {
+            $newKey = str_replace($this->formName . '-', '', $key);
+            $strippedData[$newKey] = $value;
+        }
+
+        return $strippedData;
     }
 }
