@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -20,6 +21,9 @@ declare(strict_types=1);
  */
 require __DIR__ . '/paths.php';
 
+use Cake\Error\ErrorTrap;
+use Cake\Error\ExceptionTrap;
+
 /*
  * Bootstrap CakePHP.
  *
@@ -29,6 +33,7 @@ require __DIR__ . '/paths.php';
  * - Registering the CakePHP autoloader.
  * - Setting the default application paths.
  */
+
 require CORE_PATH . 'config' . DS . 'bootstrap.php';
 
 use Cake\Cache\Cache;
@@ -74,6 +79,7 @@ use Cake\Utility\Security;
  * idea to create multiple configuration files, and separate the configuration
  * that changes from configuration that does not. This makes deployment simpler.
  */
+
 try {
     Configure::config('default', new PhpConfig());
     Configure::load('app', 'default', false);
@@ -121,12 +127,15 @@ ini_set('intl.default_locale', Configure::read('App.defaultLocale'));
  * Register application error and exception handlers.
  */
 $isCli = PHP_SAPI === 'cli';
-if ($isCli) {
-    (new ConsoleErrorHandler(Configure::read('Error')))->register();
-} else {
-    (new ErrorHandler(Configure::read('Error')))->register();
-}
+// if ($isCli) {
+//     (new ConsoleErrorHandler(Configure::read('Error')))->register();
+// } else {
+//     (new ErrorHandler(Configure::read('Error')))->register();
+// }
 
+
+(new ErrorTrap(Configure::read('Error')))->register();
+(new ExceptionTrap(Configure::read('Error')))->register();
 /*
  * Include the CLI bootstrap overrides.
  */
